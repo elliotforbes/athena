@@ -8,7 +8,7 @@ import (
 
 type ScanResult struct {
 	Port  int
-	State bool
+	State string
 }
 
 func ScanPort(protocol, hostname string, port int) ScanResult {
@@ -17,11 +17,11 @@ func ScanPort(protocol, hostname string, port int) ScanResult {
 	conn, err := net.DialTimeout(protocol, address, 60*time.Second)
 
 	if err != nil {
-		result.State = false
+		result.State = "Closed"
 		return result
 	}
 	defer conn.Close()
-	result.State = true
+	result.State = "Open"
 	return result
 }
 
