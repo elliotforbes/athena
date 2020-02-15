@@ -6,13 +6,32 @@ import (
 	"time"
 )
 
-func ScanPort(protocol, hostname string, port int) bool {
+type ScanResult struct {
+	Port  int
+	State bool
+}
+
+func ScanPort(protocol, hostname string, port int) ScanResult {
+	result := ScanResult{Port: port}
 	address := hostname + ":" + strconv.Itoa(port)
 	conn, err := net.DialTimeout(protocol, address, 60*time.Second)
 
 	if err != nil {
-		return false
+		result.State = false
+		return result
 	}
 	defer conn.Close()
-	return true
+	result.State = true
+	return result
+}
+
+func InitialScan(hostname string) []ScanResult {
+
+	var results []ScanResult
+
+	for i := 0; i <= 1024; i++ {
+		results = append(results, ScanPort("tcp", hostname, i))
+	}
+
+	return results
 }
